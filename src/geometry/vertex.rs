@@ -1,3 +1,4 @@
+#[derive(Clone)]
 pub struct Vertex{
     pub position: nalgebra_glm::Vec3,
 }

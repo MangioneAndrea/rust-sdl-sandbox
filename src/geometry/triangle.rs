@@ -1,5 +1,8 @@
+use nalgebra_glm::Mat4;
+
 use super::vertex::*;
 
+#[derive(Clone)]
 pub struct Triangle{
     a: Vertex,
     b: Vertex,
@@ -9,6 +12,14 @@ pub struct Triangle{
 impl Triangle {
     pub fn new(a: Vertex, b:Vertex, c:Vertex) -> Triangle{
         Triangle{a,b,c}
+    }
+
+    pub fn new_clone(a: &Vertex, b: &Vertex, c: &Vertex) -> Triangle{
+        Triangle::new(a.clone(), b.clone(), c.clone())
+    }
+
+    pub fn transform(&self, translate: &Mat4, scale: &Mat4) -> Self{
+        self.clone().into()
     }
 }
 
@@ -37,7 +48,6 @@ impl crate::geometry::Drawable for Triangle{
         }
     }
 }
-
 
 
 /*

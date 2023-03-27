@@ -1,4 +1,4 @@
-use crate::geometry::{triangle::Triangle, vertex::Vertex, Drawable};
+use crate::geometry::{triangle::Triangle, vertex::Vertex, Drawable, cube::Cube};
 
 use super::*;
 
@@ -10,12 +10,8 @@ impl Scene for RotatingCube{
         canvas.set_draw_color(Color::RGB(30, 30, 30));
         canvas.clear();
         canvas.set_draw_color(Color::RGB(255, 255, 255));
-        let t=Triangle::new(
-            Vertex::new(50., 100., 0.),
-            Vertex::new(75., 100., 0.),
-            Vertex::new(30., 200., 0.),
-        );
-        t.draw(canvas);
+        let c=Cube::new();
+        c.draw(canvas);
     }
 
     fn on_construction(&self) {
