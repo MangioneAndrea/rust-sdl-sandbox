@@ -3,11 +3,11 @@
 extern crate sdl2;
 
 pub(crate) mod scenes;
+pub(crate) mod geometry;
 
 use scenes::{Scene, Static, rotating_cube::*};
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
-use sdl2::pixels::Color;
 use std::time::Duration;
 
 
