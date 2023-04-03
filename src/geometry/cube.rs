@@ -2,12 +2,12 @@ use super::{Drawable, triangle::Triangle, vertex::Vertex};
 
 pub struct Cube {
     triangles: [Triangle<4>; 12],
-    translate: nalgebra_glm::Mat4,
-    scale: nalgebra_glm::Mat4,
+    translate: nalgebra_glm::Vec3,
+    scale: nalgebra_glm::Vec3,
 }
 
 impl Cube {
-    pub fn new() -> Cube{
+    pub fn new(center: nalgebra_glm::Vec3) -> Cube{
         let a= &Vertex::new(-1., -1., -1.);
         let b= &Vertex::new(1., -1., -1.);
         let c= &Vertex::new(1., 1., -1.);
@@ -37,8 +37,8 @@ impl Cube {
             Triangle::new_clone(b, a, e),
             Triangle::new_clone(b, e, f),
         ], 
-        translate: nalgebra_glm::Mat4::default(), 
-        scale: nalgebra_glm::Mat4::default(), 
+        translate: center,
+        scale: nalgebra_glm::Vec3::default(), 
         }
     }
 }
@@ -48,24 +48,3 @@ impl Drawable for Cube {
         self.triangles.iter().map(|t|t.transform(&self.translate, &self.scale)).for_each(|t|t.draw(canvas));
     }
 }
-/*
-            // Front
-            Triangle(v0, v1, v2),
-            Triangle(v0, v2, v3),
-            // Back
-            Triangle(v7, v6, v5),
-            Triangle(v7, v5, v4),
-            // Left
-
-            Triangle(v0, v3, v7),
-            Triangle(v0, v7, v4),
-            // Right
-            Triangle(v2, v1, v5),
-            Triangle(v2, v5, v6),
-            // Bottom
-            Triangle(v3, v2, v6),
-            Triangle(v3, v6, v7),
-            // Top
-            Triangle(v1, v0, v4),
-            Triangle(v1, v4, v5),
-*/

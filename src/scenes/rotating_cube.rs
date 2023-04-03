@@ -10,7 +10,7 @@ impl Scene for RotatingCube{
         canvas.set_draw_color(Color::RGB(30, 30, 30));
         canvas.clear();
         canvas.set_draw_color(Color::RGB(255, 255, 255));
-        let c=Cube::new();
+        let c=Cube::new(nalgebra_glm::vec3(1.,-1., 15.));
         c.draw(canvas);
     }
 

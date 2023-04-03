@@ -1,4 +1,4 @@
-use nalgebra_glm::Mat4;
+use nalgebra_glm::{Vec3, Mat4};
 
 use super::vertex::*;
 
@@ -18,11 +18,11 @@ impl Triangle<4> {
         Triangle::new(a.clone(), b.clone(), c.clone())
     }
 
-    pub fn transform(&self, translate: &Mat4, scale: &Mat4) -> Triangle<3>{
+    pub fn transform(&self, translate: &Vec3, rotate: &Vec3) -> Triangle<3>{
         Triangle{
-            a: self.a.translate(translate),
-            b: self.b.translate(translate),
-            c: self.c.translate(translate),
+            a: self.a.transform(translate, rotate),
+            b: self.b.transform(translate, rotate),
+            c: self.c.transform(translate, rotate),
         }
     }
 }
@@ -32,6 +32,8 @@ impl crate::geometry::Drawable for Triangle<3>{
        let a=&self.a.as_2d(); 
        let b=&self.b.as_2d(); 
        let c=&self.c.as_2d(); 
+
+       println!("{} {} {}", a,b,c);
        
         let ab= b-a;
         let ac= c-a;
@@ -41,6 +43,7 @@ impl crate::geometry::Drawable for Triangle<3>{
             for i in nalgebra_glm::min3_scalar(a.y, b.y, c.y) as i32 .. nalgebra_glm::max3_scalar(a.y, b.y, c.y) as i32 {
                 for j in nalgebra_glm::min3_scalar(a.x, b.x, c.x) as i32 .. nalgebra_glm::max3_scalar(a.x, b.x, c.x) as i32 {
                     let p = nalgebra_glm::vec2(j as f32, i as f32);
+                    // Do dis operation with GPU
                     let uv = &inv * &(p - a);
 
                     // Is in screeen
