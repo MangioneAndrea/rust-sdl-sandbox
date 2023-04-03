@@ -3,27 +3,31 @@ use nalgebra_glm::Mat4;
 use super::vertex::*;
 
 #[derive(Clone)]
-pub struct Triangle{
-    a: Vertex,
-    b: Vertex,
-    c: Vertex
+pub struct Triangle<const N:usize>{
+    a: Vertex<N>,
+    b: Vertex<N>,
+    c: Vertex<N>
 }
 
-impl Triangle {
-    pub fn new(a: Vertex, b:Vertex, c:Vertex) -> Triangle{
+impl Triangle<4> {
+    pub fn new(a: Vertex<4>, b:Vertex<4>, c:Vertex<4>) -> Triangle<4>{
         Triangle{a,b,c}
     }
 
-    pub fn new_clone(a: &Vertex, b: &Vertex, c: &Vertex) -> Triangle{
+    pub fn new_clone(a: &Vertex<4>, b: &Vertex<4>, c: &Vertex<4>) -> Triangle<4>{
         Triangle::new(a.clone(), b.clone(), c.clone())
     }
 
-    pub fn transform(&self, translate: &Mat4, scale: &Mat4) -> Self{
-        self.clone().into()
+    pub fn transform(&self, translate: &Mat4, scale: &Mat4) -> Triangle<3>{
+        Triangle{
+            a: self.a.translate(translate),
+            b: self.b.translate(translate),
+            c: self.c.translate(translate),
+        }
     }
 }
 
-impl crate::geometry::Drawable for Triangle{
+impl crate::geometry::Drawable for Triangle<3>{
     fn draw(&self, canvas: &mut sdl2::render::Canvas<sdl2::video::Window>) {
        let a=&self.a.as_2d(); 
        let b=&self.b.as_2d(); 
@@ -32,15 +36,15 @@ impl crate::geometry::Drawable for Triangle{
         let ab= b-a;
         let ac= c-a;
 
-        if ab.x * ac.y -ab.y * ac.x > 0. {
+        if ab.x * ac.y - ab.y * ac.x > 0. {
             let inv=nalgebra_glm::mat2(ab.x,ab.y, ac.x, ac.y).try_inverse().unwrap();
             for i in nalgebra_glm::min3_scalar(a.y, b.y, c.y) as i32 .. nalgebra_glm::max3_scalar(a.y, b.y, c.y) as i32 {
                 for j in nalgebra_glm::min3_scalar(a.x, b.x, c.x) as i32 .. nalgebra_glm::max3_scalar(a.x, b.x, c.x) as i32 {
                     let p = nalgebra_glm::vec2(j as f32, i as f32);
-                    let uv = inv * (p - a);
+                    let uv = &inv * &(p - a);
 
                     // Is in screeen
-                    if uv.x > 0. && uv.y >=0. && (uv.x + uv.y) <1. {
+                    if uv.x >= 0. && uv.y >=0. && (uv.x + uv.y) <1. {
                         canvas.draw_point((p.x as i32, p.y as i32));
                     }
                 }

@@ -10,13 +10,15 @@ use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use std::time::Duration;
 
+pub const WIDTH: u32 = 800;
+pub const HEIGHT: u32 = 600;
 
 pub fn main() -> Result<(), String> {
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
 
     let window = video_subsystem
-        .window("rust-sdl2 demo: Video", 1600, 1200)
+        .window("rust-sdl2 demo: Video", WIDTH, HEIGHT)
         .position_centered()
         .opengl()
         .build()

@@ -1,7 +1,7 @@
-use super::{Drawable, triangle::Triangle, triangle::Transform, vertex::Vertex, transform_matrix};
+use super::{Drawable, triangle::Triangle, vertex::Vertex};
 
 pub struct Cube {
-    triangles: [Triangle; 12],
+    triangles: [Triangle<4>; 12],
     translate: nalgebra_glm::Mat4,
     scale: nalgebra_glm::Mat4,
 }
@@ -30,14 +30,15 @@ impl Cube {
             // Right 
             Triangle::new_clone(c, b, f),
             Triangle::new_clone(c, f, g),
-            // Bottom
+             // Bottom
             Triangle::new_clone(d, c, g),
             Triangle::new_clone(d, g, h),
             // Top 
             Triangle::new_clone(b, a, e),
             Triangle::new_clone(b, e, f),
         ], 
-        translate: nalgebra_glm::translate(m, v)!; 
+        translate: nalgebra_glm::Mat4::default(), 
+        scale: nalgebra_glm::Mat4::default(), 
         }
     }
 }
