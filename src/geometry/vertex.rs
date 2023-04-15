@@ -1,10 +1,13 @@
 use nalgebra_glm::Mat4;
+use rand::Rng;
+use sdl2::pixels::Color;
 
 use crate::{WIDTH, HEIGHT};
 
 #[derive(Clone, Copy)]
 pub struct Vertex<const N: usize>{
     pub position: nalgebra_glm::TVec<f32, N>,
+    pub color: Color 
 }
 
 #[inline]
@@ -24,7 +27,6 @@ impl Vertex<3> {
     }
 }
 
-
 impl Vertex<4>{
     pub fn transform(&self, translation: &nalgebra_glm::Vec3, rotation: &nalgebra_glm::Vec3) -> Vertex<3> {
         let tr = nalgebra_glm::mat4(
@@ -33,6 +35,13 @@ impl Vertex<4>{
             0.,0.,1., translation.z,
             0.,0.,0., 0.
         );
+        let scale = nalgebra_glm::vec3(1.,1.,1.);
+        let sc = nalgebra_glm::mat4(
+            scale.x,0.,0.,0.,
+            0.,scale.y,0.,0.,
+            0.,0.,scale.z,0.,
+            0.,0.,0.,1.
+        );
 
         let rot_y = nalgebra_glm::mat4(
             rotation.y.cos(),rotation.y.sin(),0.,0.,
@@ -40,14 +49,29 @@ impl Vertex<4>{
             0.,0.,1., 0.,
             0.,0.,0., 1.
         );
+        let rot_x = nalgebra_glm::mat4(
+            rotation.x.cos(),0.,-rotation.x.sin(),0.,
+            0.,1.,0., 0.,
+            rotation.x.sin(),0.,rotation.x.cos(),0.,
+            0.,0.,0., 1.
+        );
+        let rot_z = nalgebra_glm::mat4(
+            1.,0.,0., 0.,
+            0., rotation.z.cos(),rotation.z.sin(),0.,
+            0., -rotation.z.sin(),rotation.z.cos(),0.,
+            0.,0.,0., 1.
+        );
 
-        let b: nalgebra_glm::Vec4= tr * rot_y * self.position;
-        return Vertex{position:b.xyz()};
+        let b: nalgebra_glm::Vec4= (sc * tr * (rot_y * rot_x * rot_z)) * self.position;
+        return Vertex{position:b.xyz(), color:self.color};
     }
 
     pub fn new(x: f32, y: f32, z:f32) -> Vertex<4>{
+
+        let mut rng = rand::thread_rng();
         Vertex{
-            position: nalgebra_glm::vec4(x,y,z, 1.)
+            position: nalgebra_glm::vec4(x,y,z, 1.),
+            color: Color::RGB(rng.gen(),rng.gen(), rng.gen())
         }
     }
 }

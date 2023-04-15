@@ -42,7 +42,7 @@ pub fn main() -> Result<(), String> {
                     let mut has_scene = true;
                     match keycode {
                         Keycode::Num0 => scene= Box::new(Static{}),
-                        Keycode::Num1 => scene= Box::new(RotatingCube{}),
+                        Keycode::Num1 => scene= RotatingCube::new(),
                         _ => {has_scene=false;}
                     }
                     if has_scene {

@@ -1,4 +1,6 @@
 use nalgebra_glm::{Vec3, Mat4};
+use sdl2::rect::Point;
+use sdl2::pixels::Color;
 
 use super::vertex::*;
 
@@ -33,21 +35,30 @@ impl crate::geometry::Drawable for Triangle<3>{
        let b=&self.b.as_2d(); 
        let c=&self.c.as_2d(); 
 
-       println!("{} {} {}", a,b,c);
-       
         let ab= b-a;
         let ac= c-a;
 
+        canvas.set_draw_color(Color::WHITE);
+        canvas.draw_line(Point::new(a.x as i32, a.y as i32),Point::new(b.x as i32, b.y as i32));
+        canvas.draw_line(Point::new(a.x as i32, a.y as i32),Point::new(c.x as i32, c.y as i32));
+        canvas.draw_line(Point::new(c.x as i32, c.y as i32),Point::new(b.x as i32, b.y as i32));
+        
+
+        let homogeneousA = 1. / self.a.position.z;
+        let homogeneousB = 1. / self.b.position.z;
+        let homogeneousC = 1. / self.c.position.z;
         if ab.x * ac.y - ab.y * ac.x > 0. {
-            let inv=nalgebra_glm::mat2(ab.x,ab.y, ac.x, ac.y).try_inverse().unwrap();
+            let inv=nalgebra_glm::mat2(ab.x,ac.x, ab.y, ac.y).try_inverse().unwrap();
             for i in nalgebra_glm::min3_scalar(a.y, b.y, c.y) as i32 .. nalgebra_glm::max3_scalar(a.y, b.y, c.y) as i32 {
                 for j in nalgebra_glm::min3_scalar(a.x, b.x, c.x) as i32 .. nalgebra_glm::max3_scalar(a.x, b.x, c.x) as i32 {
                     let p = nalgebra_glm::vec2(j as f32, i as f32);
-                    // Do dis operation with GPU
+
                     let uv = &inv * &(p - a);
 
                     // Is in screeen
                     if uv.x >= 0. && uv.y >=0. && (uv.x + uv.y) <1. {
+                        let homogeneous = homogeneousA + (homogeneousB - homogeneousA) * uv.x +                        (homogeneousC - homogeneousA) * uv.y;
+                        canvas.set_draw_color(self.a.color);
                         canvas.draw_point((p.x as i32, p.y as i32));
                     }
                 }

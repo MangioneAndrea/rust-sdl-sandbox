@@ -3,7 +3,7 @@ use super::{Drawable, triangle::Triangle, vertex::Vertex};
 pub struct Cube {
     triangles: [Triangle<4>; 12],
     translate: nalgebra_glm::Vec3,
-    scale: nalgebra_glm::Vec3,
+    rotate: nalgebra_glm::Vec3,
 }
 
 impl Cube {
@@ -38,13 +38,22 @@ impl Cube {
             Triangle::new_clone(b, e, f),
         ], 
         translate: center,
-        scale: nalgebra_glm::Vec3::default(), 
+        rotate: nalgebra_glm::Vec3::default(), 
         }
+    }
+    pub fn rotate(&mut self, rotate: nalgebra_glm::Vec3){
+        self.rotate=rotate;
+    }
+    
+    pub fn translate(&mut self, translate: nalgebra_glm::Vec3){
+        self.translate=translate;
     }
 }
 
 impl Drawable for Cube {
     fn draw(&self, canvas: &mut sdl2::render::Canvas<sdl2::video::Window>) {
-        self.triangles.iter().map(|t|t.transform(&self.translate, &self.scale)).for_each(|t|t.draw(canvas));
+        //self.triangles.iter().nth(4).unwrap().transform(&self.translate, &self.rotate).draw(canvas);
+        self.triangles.iter().map(|t|t.transform(&self.translate, &self.rotate)).for_each(|t|t.draw(canvas));
     }
+
 }
